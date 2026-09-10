@@ -251,6 +251,16 @@ def etiqueta(request: Request, item_id:int):
     if not qr_path.exists(): qrcode.make(item['code']).save(qr_path)
     return templates.TemplateResponse('label.html', {'request':request,'item':item,'qr':f"/labels/{item['code']}.png"})
 
+@app.get('/produtos', response_class=HTMLResponse)
+def produtos(request: Request):
+    if (g:=guard(request)): return g
+    con=db()
+    items=con.execute('SELECT * FROM items ORDER BY id DESC').fetchall()
+    con.close()
+    return templates.TemplateResponse(
+        'products.html',
+        {'request': request, 'items': items, 'user': current_user(request)}
+    )
 
 @app.get('/consignantes', response_class=HTMLResponse)
 def consignantes(request: Request):
