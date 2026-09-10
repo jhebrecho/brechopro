@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrechóPro — Estoque</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<aside>
+    <div class="brand">🛍️ <b>BrechóPro</b></div>
+
+    <nav>
+        <a href="/">🏠 Painel</a>
+        <a href="/estoque">📦 Estoque</a>
+        <a href="/logout">🚪 Sair</a>
+    </nav>
+</aside>
+
+<main>
+
+<header>
+    <form action="/estoque" method="get" class="search-form">
+        <input
+            class="global-search"
+            type="search"
+            name="q"
+            value="{{ q }}"
+            placeholder="Buscar peça, código ou marca">
+    </form>
+
+    <div class="user">
+        <span>{{ user.name if user else 'Usuário' }}</span>
+    </div>
+</header>
+
+<div class="content">
+
+    <div class="title">
+        <div>
+            <h1>Estoque</h1>
+            <p>Cadastre e acompanhe suas peças.</p>
+        </div>
+    </div>
+
+    <section class="panel">
+
+        <h2>Nova peça</h2>
+
+        <form
+            action="/estoque/novo"
+            method="post"
+            enctype="multipart/form-data"
+            class="form-grid">
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Nome da peça"
+                required>
+
+            <input
+                type="text"
+                name="category"
+                placeholder="Categoria">
+
+            <input
+                type="text"
+                name="brand"
+                placeholder="Marca">
+
+            <input
+                type="text"
+                name="size"
+                placeholder="Tamanho">
+
+            <input
+                type="number"
+                name="price"
+                step="0.01"
+                min="0"
+                placeholder="Preço de venda"
+                required>
+
+            <input
+                type="number"
+                name="cost"
+                step="0.01"
+                min="0"
+                value="0"
+                placeholder="Custo">
+
+            <select name="consignor_id">
+                <option value="">Peça própria</option>
+
+                {% for c in consignors %}
+                <option value="{{ c.id }}">
+                    {{ c.name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <input
+                type="number"
+                name="commission_percent"
+                step="0.01"
+                min="0"
+                max="100"
+                value="50"
+                placeholder="Comissão %">
+
+            <input
+                type="text"
+                name="notes"
+                placeholder="Observações">
+
+            <input
+                type="file"
+                name="photo"
+                accept="image/*">
+
+            <button class="btn" type="submit">
+                Cadastrar peça
+            </button>
+
+        </form>
+
+    </section>
+
+    <section class="panel">
+
+        <form action="/estoque" method="get" class="filters">
+
+            <input
+                type="search"
+                name="q"
+                value="{{ q }}"
+                placeholder="Buscar no estoque">
+
+            <select name="status">
+
+                <option value="">
+                    Todos os status
+                </option>
+
+                <option value="em_estoque">
+                    Em estoque
+                </option>
+
+                <option value="vendida">
+                    Vendida
+                </option>
+
+            </select>
+
+            <button class="btn" type="submit">
+                Filtrar
+            </button>
+
+            <a class="btn secondary" href="/estoque">
+                Limpar
+            </a>
+
+        </form>
+
+        <h2>Peças cadastradas</h2>
+
+        {% if items %}
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Peça</th>
+                    <th>Código</th>
+                    <th>Preço</th>
+                    <th>Consignante</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in items %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ item.name }}</strong>
+                    </td>
+
+                    <td>
+                        {{ item.code }}
+                    </td>
+
+                    <td>
+                        R$ {{ '%.2f'|format(item.price) }}
+                    </td>
+
+                    <td>
+                        {{ item.consignor_name }}
+                    </td>
+
+                    <td>
+                        <span class="tag {{ item.status }}">
+                            {{ item.status.replace('_',' ') }}
+                        </span>
+                    </td>
+
+                    <td class="actions">
+
+                        <a href="/estoque/{{ item.id }}/editar">
+                            Editar
+                        </a>
+
+                        <a href="/estoque/{{ item.id }}/etiqueta">
+                            Etiqueta
+                        </a>
+
+                        <form
+                            action="/estoque/{{ item.id }}/excluir"
+                            method="post">
+
+                            <button
+                                class="link-btn"
+                                type="submit">
+                                Excluir
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <p class="muted">
+            Nenhuma peça encontrada.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+</main>
+
+</body>
+</html>
