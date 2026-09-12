@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - BrechóPro</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7fc;
+            color: #17174f;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px 0 60px;
+        }
+
+        .topo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .voltar {
+            color: #6630c9;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 34px;
+        }
+
+        .subtitulo {
+            color: #747492;
+            margin-top: 8px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e4e4ef;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .produto {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .produto h3 {
+            margin: 0 0 8px;
+        }
+
+        .codigo {
+            color: #77778f;
+            font-size: 14px;
+        }
+
+        .preco {
+            font-size: 20px;
+            font-weight: bold;
+            color: #6630c9;
+            white-space: nowrap;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #77778f;
+            padding: 35px 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="topo">
+        <div>
+            <h1>Produtos</h1>
+            <p class="subtitulo">Consulte os produtos cadastrados no seu brechó.</p>
+        </div>
+
+        <a href="/" class="voltar">← Painel</a>
+    </div>
+
+    {% if items %}
+
+        {% for item in items %}
+        <div class="card produto">
+            <div>
+                <h3>{{ item['name'] }}</h3>
+
+                <div class="codigo">
+                    Código: {{ item['code'] }}
+                </div>
+
+                {% if item['category'] %}
+                <div class="codigo">
+                    Categoria: {{ item['category'] }}
+                </div>
+                {% endif %}
+
+                {% if item['brand'] %}
+                <div class="codigo">
+                    Marca: {{ item['brand'] }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="preco">
+                R$ {{ "%.2f"|format(item['sale_price'] or 0) }}
+            </div>
+        </div>
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card vazio">
+            Nenhum produto cadastrado.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
